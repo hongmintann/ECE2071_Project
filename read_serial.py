@@ -51,3 +51,20 @@ ser.close()
 print("Stop reading data...")
 print("")
 
+# Part 3
+# Ask user to choose output formats
+input_count = 0
+output_list = []
+print("========== Output Formats ==========")
+print("1 -> '.wav' audio file")
+print("2 -> '.png' image file")
+print("3 -> '.csv. data file")
+while (input_count < 3):
+    output_format = int(input(">> Enter output format : "))
+    if (output_format >= 1 and output_format <= 3):
+        output_list.append(output_format)
+    else:
+        break
+    input_count += 1
+print("")
+
