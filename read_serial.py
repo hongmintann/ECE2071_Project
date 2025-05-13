@@ -108,3 +108,21 @@ if png_format_indicator in output_list:
     plt.close()
     print("Program result (Image) : Success.")
 
+# Part 6
+# Generate a datasheet of raw audio data (in CSV format)
+csv_format_indicator = 3
+if csv_format_indicator in output_list:
+    print("Start generating datasheet...")
+    with open("Raw ADC Data.csv", "w", newline = "") as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow([f"Sampling rate : {sample_rate} Hz"])
+        for value in raw_ADC_values:
+            writer.writerow([value])
+        csv_file.close()
+    print("Program result (Datasheet) : Success.")
+    print("")
+
+# For checking purpose only
+print("ADC values (Checking) : ", raw_ADC_values)
+print("Time (Checking) : ", time)
+print("")
