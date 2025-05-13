@@ -29,3 +29,25 @@ else:
     operation_command = f"2 - {ultrasonic_distance}"
 print("")
 
+# Part 2
+cumulative_bytes = 0
+total_bytes = audio_duration * (sample_rate * num_of_channels * bytes_per_sample)
+# Open serial port for communication
+ser = serial.Serial(port = "COM9", baudrate = 230400, bytesize = 8, parity = "N", stopbits = 1, timeout = 5)
+print(f"Serial port : {ser.name}")
+# Send operation mode chosen by the user to microcontroller
+ser.write(operation_command.encode())
+time.sleep(1)
+# Open and write raw ADC value into binary file
+print("Start reading data...")
+with open("raw_ADC_values.data","wb") as file:
+    while cumulative_bytes < total_bytes:
+        read_bytes = ser.read(500)
+        file.write(read_bytes)
+        cumulative_bytes += len(read_bytes)
+    file.close()
+# Close serial port
+ser.close()
+print("Stop reading data...")
+print("")
+
