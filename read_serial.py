@@ -85,3 +85,26 @@ if wav_format_indicator in output_list:
         run_result = subprocess.run(run_command, capture_output = True, text = True)
         print("Program result (Audio) : " + run_result.stdout)
 
+# Part 5
+# Convert the raw ADC values from bytes to unsigned 16-bit integers
+png_format_indicator = 2
+if png_format_indicator in output_list:
+    print("Start generating image...")
+    with open("raw_ADC_values.data", "rb") as file:
+        raw_bytes = file.read()
+        raw_ADC_values = np.frombuffer(raw_bytes, dtype = np.uint16)
+        file.close()
+    # Generate a time axis for the plot below
+    time = np.arange(len(raw_ADC_values)) / sample_rate
+    # Create a plot of "amplitude" vs "time" waveform (in PNG format)
+    plt.figure()
+    plt.plot(time, raw_ADC_values)
+    plt.title("Amplitude v.s. Time")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig("Raw ADC Data.png")
+    plt.close()
+    print("Program result (Image) : Success.")
+
