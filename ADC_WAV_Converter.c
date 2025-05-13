@@ -29,3 +29,74 @@ void wav_header(FILE *output_file_arg, uint32_t num_of_samples_arg)
     fwrite(&data_size, 4, 1, output_file_arg);          // Total size of data (in bytes) - without header information
 }
 
+int main(int argc, char *argv[])
+{
+    if (argc != 3)
+    {
+        printf("Insufficient arguments detected.");
+        return 1;
+    }
+    else
+    {
+        long input_file_size;
+        int16_t pcm_sample;
+        uint16_t adc_sample;
+        uint32_t num_of_samples;
+        
+        char *input_file = argv[1];
+        char *output_file = argv[2];
+
+        FILE *fptr_in = fopen(input_file, "rb");
+        if (!fptr_in)
+        {
+            printf("Error in opening input file.");
+            return 1;
+        }
+        else
+        {
+            // Determine the total size of input file
+            fseek(fptr_in, 0, SEEK_END);
+            input_file_size = ftell(fptr_in);
+            // Move the file pointer to starting point of input file
+            fseek(fptr_in, 0, SEEK_SET);
+            if (input_file_size % 2 != 0)
+            {
+                printf("Invalid file size detected.");
+                fclose(fptr_in);
+                return 1;
+            }
+
+            // Write the output file
+            num_of_samples = input_file_size / 2;
+            FILE *fptr_out = fopen(output_file,"wb");
+            if (!fptr_out)
+            {
+                printf("Error in opening output file.");
+                return 1;
+            }
+            else
+            {
+                wav_header(fptr_out, num_of_samples);
+                for (uint32_t i = 0; i < num_of_samples; ++i)
+                {
+                    if (fread(&adc_sample, sizeof(uint16_t), 1, fptr_in) != 1)
+                    {
+                        printf("Error in reading sample.\n");
+                        break;
+                    }
+                    else
+                    {
+                        pcm_sample = (int16_t) (((int32_t) adc_sample - 2048) * 16);
+                        fwrite(&pcm_sample, sizeof(int16_t), 1, fptr_out);
+                    }
+                }
+
+                fclose(fptr_in);
+                fclose(fptr_out);
+                
+                printf("'%s' WAV file is generated successfully with %u samples.",output_file,num_of_samples);
+                return 0;
+            }
+        }
+    }
+}
