@@ -68,3 +68,20 @@ while (input_count < 3):
     input_count += 1
 print("")
 
+# Part 4
+# Compile & run "ADC_WAV_Converter.c" to generate "WAV_Output.wav"
+wav_format_indicator = 1
+if wav_format_indicator in output_list:
+    print("Start compiling file...")
+    compile_command = ["gcc", "ADC_WAV_Converter.c", "-o","ADC_WAV_Converter"]
+    compile_result = subprocess.run(compile_command, capture_output = True, text = True)
+    if compile_result.returncode != 0:
+        print("Compilation result : Fail.")
+        exit()
+    else:
+        print("Compilation result : Success.")
+        print("Start generating audio file...")
+        run_command = ["./ADC_WAV_Converter", "raw_ADC_values.data", "WAV_Output.wav"]
+        run_result = subprocess.run(run_command, capture_output = True, text = True)
+        print("Program result (Audio) : " + run_result.stdout)
+
